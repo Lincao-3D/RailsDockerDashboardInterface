@@ -1,0 +1,30 @@
+<%# app/views/dashboard/_sent_tips_table_body.html.erb %>
+
+<%# The `local_assigns.fetch(:sent_tips, [])` provides a default empty array %>
+<%# if `sent_tips` is not explicitly passed, though it should be. %>
+<% if local_assigns.fetch(:sent_tips, []).present? %>
+  <% sent_tips.each do |tip| %>
+    <tr>
+      <td style="width: 20%;"><%= tip.sent_at.strftime("%Y-%m-%d %H:%M") %></td>
+      <td style="width: 20%;"><%= truncate(tip.title, length: 30) %></td>
+      <td style="width: 35%;"><%= truncate(tip.message, length: 70) %></td>
+      <td style="width: 15%;">
+        <% if tip.image_url.present? %>
+          <%= link_to truncate(tip.image_url, length: 20), tip.image_url, target: "_blank", title: tip.image_url %>
+        <% else %>
+          -
+        <% end %>
+      </td>
+      <td style="width: 10%;">
+        <span class="badge bg-<%= tip.status == 'sent' ? 'success' : (tip.status == 'failed' ? 'danger' : 'secondary') %>">
+          <%= tip.status&.titleize %>
+        </span>
+      </td>
+    </tr>
+  <% end %>
+<% else %>
+  <tr id="noTipsSentRow"> <%# Keep this ID if you ever need to specifically target this row with JS %>
+    <td colspan="5" class="text-center">No tips sent yet.</td>
+  </tr>
+<% end %>
+

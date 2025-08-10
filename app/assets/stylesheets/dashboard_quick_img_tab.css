@@ -1,0 +1,105 @@
+/* app/assets/stylesheets/dashboard_quick_img_tab.css */
+
+#quickImgTabButton {
+  position: fixed;
+  top: 50%;
+  right: 0;
+  transform: translateY(-50%) translateX(calc(100% - 1.5rem)) rotate(180deg); /* Pulls left by its own width */
+  writing-mode: vertical-rl;
+  padding: 0.5rem 0.75rem;
+  background-color: #0dcaf0;
+  color: white;
+  /* border: 1px solid #0a9cb5; */
+  border-right: none;
+  border-top-left-radius: 0.25rem;  /* Optional: round the visible corners */
+  border-bottom-left-radius: 0.25rem; /* Optional: round the visible corners */
+  
+  cursor: pointer;
+  white-space: nowrap;
+  z-index: 1051; /* Higher than panel */
+}
+
+#quickImgPanel {
+  position: fixed; /* Also fixed */
+  top: 50%;
+  right: -300px; /* Start off-screen */
+  transform: translateY(-50%); /* Vertically center panel */
+  width: 300px;
+  max-height: 80vh;
+  transition: right 0.3s ease-in-out;
+  box-shadow: -5px 0px 15px rgba(0,0,0,0.2);
+  background-color: #343a40;
+  color: white;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  z-index: 1050; /* Lower than button */
+  border-top-left-radius: 0.25rem; /* For aesthetics */
+  border-bottom-left-radius: 0.25rem;
+}
+
+#quickImgPanel.open {
+  right: 0; /* Slide in to the edge of the viewport */
+}
+
+/* DropZone, ImgList, ImgItem styles remain the same */
+#quickImgDropZone {
+  border: 2px dashed #6c757d;
+  background-color: rgba(0,0,0,0.1);
+  min-height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: default;
+  color: #f8f9fa;
+}
+
+#quickImgDropZone.drag-over {
+  border-color: #0dcaf0;
+  background-color: rgba(13, 202, 240, 0.1);
+}
+
+.quick-img-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+  padding: 0.5rem;
+  background-color: rgba(255,255,255,0.05);
+  border-radius: 0.25rem;
+}
+
+.quick-img-item input[type="checkbox"] {
+  margin-right: 0.75rem;
+  transform: scale(1.2);
+}
+
+.quick-img-item .img-preview-container {
+  width: 50px;
+  height: 50px;
+  margin-right: 0.75rem;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #495057;
+}
+
+.quick-img-item .img-preview-container img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: cover;
+}
+
+.quick-img-item .img-url-link {
+  word-break: break-all;
+  font-size: 0.8rem;
+  color: #adb5bd;
+}
+.quick-img-item .img-url-link:hover {
+  color: #ced4da;
+}
+
+/* Delete button styling */
+#deleteSelectedImgsButton {
+ /* Already has btn btn-danger btn-sm w-100 from HTML, should be fine */
+}

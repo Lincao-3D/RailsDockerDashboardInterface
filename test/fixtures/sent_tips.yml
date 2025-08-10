@@ -1,0 +1,21 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  title: MyString
+  message: MyText
+  image_url: MyString
+  target_display_info: MyString
+  sent_at: 2025-08-06 15:32:55
+  fcm_message_id: MyString
+  status: MyString
+  error_message: MyText
+
+two:
+  title: MyString
+  message: MyText
+  image_url: MyString
+  target_display_info: MyString
+  sent_at: 2025-08-06 15:32:55
+  fcm_message_id: MyString
+  status: MyString
+  error_message: MyText

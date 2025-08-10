@@ -1,0 +1,141 @@
+/* app/assets/stylesheets/custom_login.css */
+
+body.login-page {
+  background-color: #000; /* Initial black background */
+  overflow: hidden; /* Prevent scrollbars if video slightly overflows or during animation */
+  color: #fff;
+}
+
+.video-background-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -2; /* Behinds default content stack */
+  background-color: #000; /* Fallback if video fails to load */
+}
+
+#loginBgVideo {
+  position: absolute;
+  top: 50%; /* Initial Y position for centering with transform */
+  left: 50%; /* Initial X position for centering with transform */
+  min-width: 100%;
+  min-height: 100%;
+  width: auto;   /* Maintain aspect ratio */
+  height: auto;  /* Maintain aspect ratio */
+  object-fit: cover; /* Cover the entire container */
+  opacity: 0; /* Start hidden for fade-in animation */
+  animation:
+    fadeInVideo 1s ease-in forwards, /* Video fade-in animation */
+    marqueeVideoUp 120s linear infinite 1s; /* Marquee effect, starts after fade-in */
+  transform: translateX(-50%) translateY(-50%); /* Center the video initially - will be part of marquee now */
+}
+
+.video-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6); /* 60% black dimming mask */
+  z-index: -1; /* Above video, but still behind default content stack */
+}
+
+.login-container {
+  min-height: 100vh; /* Full viewport height */
+  display: flex; /* For centering the card */
+  align-items: center; /* For centering the card */
+  justify-content: center; /* For centering the card */
+  position: relative; /* Crucial for establishing a stacking context */
+  z-index: 1; /* Ensures this container (and its children) are above elements with z-index < 1 */
+  padding: 1rem; /* Add some padding so card doesn't touch edges on small screens */
+}
+
+.login-card {
+  width: 100%;
+  max-width: 400px; /* Adjust as needed */
+  background-color: rgba(40, 43, 48, 0.85); /* Dark, slightly transparent card background */
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.375rem; /* Bootstrap's default rounded */
+  padding: 2rem; /* Bootstrap's p-4 equivalent */
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.3); /* Softer shadow */
+  opacity: 0;
+  animation: fadeInCard 0.35s ease-out 0.5s forwards; /* 0.5s delay to start after video starts fading */
+  color: #fff; /* Default text color for card content */
+}
+
+/* Styling for form elements within the card for better visibility */
+.login-card .form-label {
+  color: #f8f9fa; /* Lighter text for labels */
+}
+
+.login-card .form-control {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+.login-card .form-control:focus {
+  background-color: rgba(255, 255, 255, 0.15);
+  border-color: #0d6efd; /* Bootstrap primary for focus */
+  color: #fff;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+.login-card .form-check-input {
+   background-color: rgba(255,255,255,0.1);
+   border-color: rgba(255,255,255,0.2);
+}
+.login-card .form-check-input:checked {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+/* Styling for links within the card (e.g., "Forgot password?") */
+.login-card a {
+  color: #6ea8fe; /* A lighter blue, good on dark backgrounds */
+}
+.login-card a:hover {
+  color: #9ec5fe;
+}
+
+
+/* Animations */
+.video-background-fade-in { /* This class is on the video tag itself now */
+  /* animation: fadeInVideo 1s ease-in forwards; -- Combined into #loginBgVideo animation rule */
+}
+
+@keyframes fadeInVideo {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeInCard {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes marqueeVideoUp {
+  0% {
+    /* translateX(-50%) is to center it horizontally */
+    /* translateY value shifts the video. -50% is perfectly centered.
+       Less negative (e.g., -45%) means video's center is 'lower' on screen (video appears higher).
+       More negative (e.g., -55%) means video's center is 'higher' on screen (video appears lower).
+       So to scroll up, we need to make translateY more negative over time.
+    */
+    transform: translateX(-50%) translateY(-50%); /* Start at center */
+  }
+  50% {
+    transform: translateX(-50%) translateY(-53%); /* Moves video content up by 3% of its height */
+  }
+  100% {
+    transform: translateX(-50%) translateY(-50%); /* Returns to start for a smooth loop */
+  }
+}

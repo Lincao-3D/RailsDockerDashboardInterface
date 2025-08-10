@@ -1,0 +1,32 @@
+services:
+  db:
+    image: postgres:12
+    environment:
+      POSTGRES_USER: postgres       # Explicitly set user
+      POSTGRES_PASSWORD: password   # Your chosen password
+      POSTGRES_DB: app_development  # Explicitly set database name
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    # Optional: Expose port 5432 on the host if you need direct DB access from host
+    # ports:
+    #   - "5432:5432"
+
+  web:
+    build: .
+    entrypoint: ["/bin/bash", "./entrypoint.sh"] 
+    # ["bash", "entrypoint.sh"]
+    # bash entrypoint.sh # Assuming entrypoint.sh is in your project root
+    command: ["rails", "server", "-b", "0.0.0.0"]
+    volumes:
+      - .:/app # Mounts current directory (app code) to /app in container
+      # If your firebase_key.json is needed at build/runtime and is in ./config:
+      # - ./config/firebase_key.json:/app/config/firebase_key.json:ro
+    ports:
+      - "3000:3000" # Rails app listens on 3000 inside, map to host 3000
+    depends_on:
+      - db
+    env_file:
+      - .env # Loads environment variables from .env file
+
+volumes:
+  db_data: # Defines the named volume for PostgreSQL data persistence
