@@ -11,7 +11,8 @@ ENV RAILS_LOG_TO_STDOUT="true"
 ENV RAILS_SERVE_STATIC_FILES="true"
 # Set BUNDLE_WITHOUT globally for the build stages
 ENV BUNDLE_WITHOUT="development:test"
-ENV BUNDLE_JOBS="$(nproc)" # Use available processors for bundling
+# Use available processors for bundling
+ENV BUNDLE_JOBS="$(nproc)"
 
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y \
