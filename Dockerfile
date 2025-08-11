@@ -74,10 +74,10 @@ ENV PATH="/home/appuser/app/vendor/bundle/bin:/home/appuser/app/vendor/bundle/ru
 
 # Copy necessary artifacts from the builder stage.
 # These paths are relative to the WORKDIR in both stages (/home/appuser/app).
-COPY --from=builder --chown=appuser:appuser ./vendor/bundle ./vendor/bundle
-COPY --from=builder --chown=appuser:appuser ./public/assets ./public/assets
-# This copies the rest of the app, including .bundle/config
-COPY --from=builder --chown=appuser:appuser . . 
+COPY --from=builder --chown=appuser:appuser /home/appuser/app/vendor/bundle /home/appuser/app/vendor/bundle
+COPY --from=builder --chown=appuser:appuser /home/appuser/app/public/assets /home/appuser/app/public/assets
+COPY --from=builder --chown=appuser:appuser /home/appuser/app /home/appuser/app
+
 
 # Ensure entrypoint is executable
 RUN chmod +x ./entrypoint.sh
