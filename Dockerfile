@@ -69,9 +69,9 @@ COPY . .
 # Pass RAILS_ENV and the new ASSETS_PRECOMPILE_CONTEXT
 # SECRET_KEY_BASE_DUMMY is needed if credentials are not fully loaded for asset precompilation
 RUN SECRET_KEY_BASE_DUMMY=1 \
-    RAILS_ENV="${RAILS_ENV}" \
-    ASSETS_PRECOMPILE_CONTEXT=true \
-    bundle exec rails assets:precompile
+	RAILS_ENV="${RAILS_ENV}" \
+	ASSETS_PRECOMPILE_CONTEXT=true \
+	bundle exec rails assets:precompile --trace
 
 # ---- Final Stage ----
 FROM base AS final
