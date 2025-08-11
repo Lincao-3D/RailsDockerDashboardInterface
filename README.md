@@ -24,3 +24,4 @@ Development was primarily conducted within a **Windows Subsystem for Linux (WSL 
 ## Engineering & Deployment
 
 This dashboard is engineered for **full-stack control**, reflecting a deep understanding of the interactions between the frontend, backend (Rails), database (PostgreSQL), and the containerized Linux environment. The rigorous approach to dependency management, environment configuration (as seen with Docker and `entrypoint.sh` scripting), and version juggling ensures a resilient and deployable administrative tool, ready for platforms like Render.
+
