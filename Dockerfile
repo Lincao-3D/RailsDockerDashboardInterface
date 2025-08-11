@@ -1,6 +1,5 @@
 # Dockerfile
-# syntax=docker/dockerfile:1.4 
-# ↑ Good to keep for BuildKit features
+# syntax=docker/dockerfile:1.4
 
 # ---- Base Stage ----
 FROM ruby:2.7.8-slim AS base
@@ -22,11 +21,10 @@ RUN apt-get update -qq && \
 RUN gem update --system 3.4.22 && \
     gem install bundler:2.4.22
 
-# Create non-root user
 RUN groupadd --gid 1000 appuser && \
     useradd --uid 1000 --gid 1000 --create-home --home-dir /home/appuser \
       --shell /bin/bash appuser
-# USER and WORKDIR will be set here, applicable to this stage and inherited
+
 USER appuser
 WORKDIR /home/appuser/app
 
@@ -34,7 +32,6 @@ WORKDIR /home/appuser/app
 FROM base AS builder
 # Inherits USER appuser and WORKDIR /home/appuser/app
 
-# --- MODIFICATION: Use --chown on Gemfile and Gemfile.lock copy ---
 COPY --chown=appuser:appuser Gemfile Gemfile.lock ./
 
 RUN bundle config set --local deployment 'true' && \
@@ -43,18 +40,15 @@ RUN bundle config set --local deployment 'true' && \
     find vendor/bundle/ruby/*/gems/ -name "*.c" -delete && \
     find vendor/bundle/ruby/*/gems/ -name "*.o" -delete
 
-# --- MODIFICATION: Use --chown on main code copy ---
 COPY --chown=appuser:appuser . .
 
-# Ensure tmp and log directories exist and are writable by appuser
-# Since all files were copied as appuser, appuser should be able to do this.
 RUN mkdir -p tmp/cache/assets tmp/pids tmp/sockets log && \
-    chmod -R u+rwX tmp log # Ensure correct permissions, u+rwX is good
+# Ensure appuser owns these after creation as well
+    chown -R appuser:appuser tmp log 
 
-# Assets precompilation
 RUN <<'EOF'
 set -e
-echo "Running assets:precompile..."
+echo "Builder: Running assets:precompile..."
 SECRET_KEY_BASE_DUMMY=1 \
 ASSETS_PRECOMPILE_CONTEXT=true \
 bundle exec rails assets:precompile --trace 2>&1
@@ -62,22 +56,34 @@ EOF
 
 # ---- Final Stage ----
 FROM base AS final
-# Inherits USER appuser and WORKDIR /home/appuser/app
+# Inherits USER appuser and WORKDIR /home/appuser/app from base
 
-# Copy only necessary artifacts from builder.
-# Source paths are from the builder's WORKDIR (/home/appuser/app)
-# Destination paths are to the final stage's WORKDIR (/home/appuser/app)
-COPY --from=builder --chown=appuser:appuser /home/appuser/app/vendor/bundle ./vendor/bundle
-COPY --from=builder --chown=appuser:appuser /home/appuser/app/public/assets ./public/assets
-# Copy the rest of the application code that was already chowned in builder
-COPY --from=builder --chown=appuser:appuser /home/appuser/app .
+# --- MODIFICATION START: Explicit Bundler/Gem Environment for Runtime ---
+# Set environment variables to ensure Bundler knows where to find gems and its config.
+# Paths are absolute, reflecting the WORKDIR /home/appuser/app.
+ENV BUNDLE_PATH="/home/appuser/app/vendor/bundle" \
+    BUNDLE_APP_CONFIG="/home/appuser/app/.bundle" \
+    GEM_HOME="/home/appuser/app/vendor/bundle" \
+    GEM_PATH="/home/appuser/app/vendor/bundle"
+
+# Ensure the PATH includes where gem executables are.
+# For Ruby 2.7.x, the directory is typically 'ruby/2.7.0'.
+# This helps `bundle exec` or direct calls to gem executables.
+ENV PATH="/home/appuser/app/vendor/bundle/bin:/home/appuser/app/vendor/bundle/ruby/2.7.0/bin:${PATH}"
+# --- MODIFICATION END ---
+
+# Copy necessary artifacts from the builder stage.
+# These paths are relative to the WORKDIR in both stages (/home/appuser/app).
+COPY --from=builder --chown=appuser:appuser ./vendor/bundle ./vendor/bundle
+COPY --from=builder --chown=appuser:appuser ./public/assets ./public/assets
+# This copies the rest of the app, including .bundle/config
+COPY --from=builder --chown=appuser:appuser . . 
+
+# Ensure entrypoint is executable
+RUN chmod +x ./entrypoint.sh
 
 EXPOSE 3000
 
-# entrypoint.sh should have been copied with correct ownership by the COPY . . above
-# ↓ Path relative to WORKDIR
-RUN chmod +x ./entrypoint.sh
-# ↓ Path relative to WORKDIR
-ENTRYPOINT ["./entrypoint.sh"] 
+ENTRYPOINT ["./entrypoint.sh"]
 CMD ["bundle", "exec", "puma", "-C", "config/puma.rb"]
 
