@@ -1,3 +1,4 @@
+ruby
 require "active_support/core_ext/integer/time"
 
 Rails.application.configure do
@@ -18,16 +19,28 @@ Rails.application.configure do
 
   # Ensures that a master key has been made available in ENV["RAILS_MASTER_KEY"], config/master.key, or an environment
   # key such as config/credentials/production.key. This key is used to decrypt credentials (and other encrypted files).
-  # config.require_master_key = true
+  # config.require_master_key = true # This is the original line, commented out or removed
+
+  # --- MODIFICATION START ---
+  # Only require master key at runtime, not during `assets:precompile`
+  # ASSETS_PRECOMPILE_CONTEXT will be set to 'true' in the Dockerfile for that step
+  config.require_master_key = ENV['ASSETS_PRECOMPILE_CONTEXT'] != 'true'
+  # --- MODIFICATION END ---
 
   # Disable serving static files from `public/`, relying on NGINX/Apache to do so instead.
-  # config.public_file_server.enabled = false
+  # config.public_file_server.enabled = false 
+  # ^ Your existing commented out line. If you are using Render,
+  # Render's web server will serve static files, so you might need to enable this
+  # if not using a separate CDN or if Render doesn't do it by default for Rails.
+  # For Render, it's common to set this based on an ENV var:
+  config.public_file_server.enabled = ENV['RAILS_SERVE_STATIC_FILES'].present?
+
 
   # Compress CSS using a preprocessor.
-  # config.assets.css_compressor = :sass
+  # config.assets.css_compressor = :sass # This is an older way. Modern Rails uses other tools or relies on sprockets-rails.
 
   # Do not fallback to assets pipeline if a precompiled asset is missed.
-  config.assets.compile = false
+  config.assets.compile = false # This is correct for production
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
   # config.asset_host = "http://assets.example.com"
@@ -37,7 +50,7 @@ Rails.application.configure do
   # config.action_dispatch.x_sendfile_header = "X-Accel-Redirect" # for NGINX
 
   # Store uploaded files on the local file system (see config/storage.yml for options).
-  config.active_storage.service = :local
+  config.active_storage.service = :local # Ensure this is configured correctly for your production environment (e.g., :amazon, :google if using cloud storage)
 
   # Mount Action Cable outside main process or domain.
   # config.action_cable.mount_path = nil
@@ -46,10 +59,10 @@ Rails.application.configure do
 
   # Assume all access to the app is happening through a SSL-terminating reverse proxy.
   # Can be used together with config.force_ssl for Strict-Transport-Security and secure cookies.
-  # config.assume_ssl = true
+  # config.assume_ssl = true # Render usually handles SSL termination, so this might not be needed.
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
-  config.force_ssl = true
+  config.force_ssl = true # Good to keep if Render doesn't enforce HSTS or if you want Rails to manage secure cookies.
 
   # Log to STDOUT by default
   config.logger = ActiveSupport::Logger.new(STDOUT)
@@ -65,11 +78,11 @@ Rails.application.configure do
   config.log_level = ENV.fetch("RAILS_LOG_LEVEL", "info")
 
   # Use a different cache store in production.
-  # config.cache_store = :mem_cache_store
+  # config.cache_store = :mem_cache_store # Consider using :redis_cache_store if you have Redis available
 
   # Use a real queuing backend for Active Job (and separate queues per environment).
   # config.active_job.queue_adapter = :resque
-  # config.active_job.queue_name_prefix = "app_production"
+  # config.active_job.queue_name_prefix = "app_production" # Example: :sidekiq
 
   config.action_mailer.perform_caching = false
 
