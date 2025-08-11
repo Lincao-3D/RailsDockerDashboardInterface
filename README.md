@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Rails Docker Dashboard Interface
 
 Streamlined **Rails dashboard**, Dockerized for portability. Features Bootstrap UI and robust Firebase integration, adeptly managing version complexities for seamless Android Studio connectivity and advanced backend logic. Engineered for full-stack control via proven WSL environment navigation testing after meticulous Bundler & Bash intricacies.
@@ -24,3 +25,4 @@ Development was primarily conducted within a **Windows Subsystem for Linux (WSL 
 ## Engineering & Deployment
 
 This dashboard is engineered for **full-stack control**, reflecting a deep understanding of the interactions between the frontend, backend (Rails), database (PostgreSQL), and the containerized Linux environment. The rigorous approach to dependency management, environment configuration (as seen with Docker and `entrypoint.sh` scripting), and version juggling ensures a resilient and deployable administrative tool, ready for platforms like Render.
+=======
