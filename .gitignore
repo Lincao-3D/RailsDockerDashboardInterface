@@ -32,6 +32,7 @@
 !/tmp/storage/.keep
 rails/bprogress-8493b-firebase-adminsdk-fbsvc-48da572c00.json
 rails/*firebase-adminsdk*.json
+rails/*firebase_key*.json
 /public/assets
 
 # Ignore master key for decrypting credentials and more.
