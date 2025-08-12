@@ -1,13 +1,23 @@
 #!/bin/bash
-set -e
+set -e # Exit immediately if a command exits with a non-zero status.
 
 # Remove a potentially pre-existing server.pid for Rails.
-# Assuming WORKDIR is /home/appuser/app as set in Dockerfile final stage
-rm -f tmp/pids/server.pid
+if [ -f /home/appuser/app/tmp/pids/server.pid ]; then
+  rm /home/appuser/app/tmp/pids/server.pid
+fi
 
-# RAILS_ENV will be set by Render (or other production ENV VARS)
 echo "Entrypoint: RAILS_ENV is currently: ${RAILS_ENV}"
-echo "Entrypoint: Executing main command: $@"
 
-# Then exec the container's main process (what's set as CMD in the Dockerfile).
+echo "Entrypoint: Running database migrations..."
+bundle exec rails db:migrate
+echo "Entrypoint: Database migrations complete."
+
+echo "Entrypoint: Running database seeds..."
+bundle exec rails db:seed # Make sure this line is active
+echo "Entrypoint: Database seeds complete."
+
+# Then exec the container's main process (CMD in Dockerfile).
+# This will be 'bundle exec puma -C config/puma.rb' from your Dockerfile's CMD.
+echo "Entrypoint: Executing main command: $@"
 exec "$@"
+
