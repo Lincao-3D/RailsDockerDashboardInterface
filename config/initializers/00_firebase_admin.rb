@@ -30,7 +30,9 @@ begin
 
   firebase_credentials = nil
   credential_source_info = "" # For logging
-
+	# debug logs
+    Rails.logger.info "Firebase Initializer: Checking ENV['FIREBASE_CREDENTIALS_JSON']. Length: #{ENV['FIREBASE_CREDENTIALS_JSON']&.length}. Present?: #{ENV['FIREBASE_CREDENTIALS_JSON'].present?}."
+    Rails.logger.debug "Firebase Initializer: First 50 chars of ENV['FIREBASE_CREDENTIALS_JSON']: #{ENV['FIREBASE_CREDENTIALS_JSON']&.first(50)}"
   # 1. Attempt to load credentials from ENV variable first
   if ENV['FIREBASE_CREDENTIALS_JSON'].present?
     begin
