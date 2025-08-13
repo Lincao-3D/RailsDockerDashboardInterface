@@ -89,5 +89,22 @@
     </div>
     <button id="deleteSelectedImgsButton" class="btn btn-danger btn-sm w-100">Delete Selected</button>
   </div>
+  
+  <script>
+  document.addEventListener('keydown', function(event) {
+    // Check for Ctrl + Alt + 5
+    if (event.ctrlKey && event.altKey && event.key === '5') {
+      event.preventDefault(); // Prevent any default browser action
+
+      // Confirm with the user before redirecting
+      if (confirm('Do you want to go to the password change page?')) {
+        // Ensure you have a current_admin_user or similar context for Devise
+        // If edit_admin_user_registration_path needs an object, adjust accordingly.
+        // For a typical Devise setup, it usually infers the current signed-in user.
+        window.location.href = '<%= edit_admin_user_registration_path %>';
+      }
+    }
+  });
+  </script>
 
 </div> <%# End of .container-fluid %>
