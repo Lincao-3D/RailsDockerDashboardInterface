@@ -12,9 +12,9 @@ echo "Entrypoint: Running database migrations..."
 bundle exec rails db:migrate
 echo "Entrypoint: Database migrations complete."
 
-echo "Entrypoint: Running database seeds..."
-bundle exec rails db:seed # Make sure this line is active
-echo "Entrypoint: Database seeds complete."
+echo "Entrypoint: Avoiding database seeds..."
+# bundle exec rails db:seed # Make sure this line is active
+echo "Entrypoint: Database seeds weren't used because working ones have already been served in an earlier run."
 
 # Then exec the container's main process (CMD in Dockerfile).
 # This will be 'bundle exec puma -C config/puma.rb' from your Dockerfile's CMD.

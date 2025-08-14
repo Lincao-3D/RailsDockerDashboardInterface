@@ -16,4 +16,12 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
+  
+  # mapping
+  namespace :api do
+    namespace :v1 do
+      # Creates a POST route to /api/v1/devices, mapped to DevicesController#create
+      resources :devices, only: [:create]
+    end
+  end
 end
