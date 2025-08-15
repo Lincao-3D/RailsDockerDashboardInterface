@@ -15,7 +15,13 @@ Devise.setup do |config|
   # Devise will use the `secret_key_base` as its `secret_key`
   # by default. You can change it below and use your own secret key.
   # config.secret_key = 'a6b598fefeb7d94f2103971048a12e683287a0bbde6a2c386bd7d91e430a69a368cf7a6ca673851b6e29ea3b3b0ffa6d31738b43cc1115b61731ba27a9f15264'
+  
+  # Insert your other Devise configuration options here...
 
+  # Use a custom failure app for Warden (e.g. to render JSON errors)
+  config.warden do |manager|
+    manager.failure_app = JsonApiFailureApp # Use your custom failure app class here
+  end
   # ==> Controller configuration
   # Configure the parent class to the devise controllers.
   # config.parent_controller = 'DeviseController'
@@ -263,8 +269,8 @@ Devise.setup do |config|
   # should add them to the navigational formats lists.
   #
   # The "*/*" below is required to match Internet Explorer requests.
-  # config.navigational_formats = ['*/*', :html, :turbo_stream]
-  config.navigational_formats = [:html]
+  config.navigational_formats = ['*/*', :html, :turbo_stream]
+  # config.navigational_formats = [:html]
   # The default HTTP method used to sign out a resource. Default is :delete.
   config.sign_out_via = :delete
 
