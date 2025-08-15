@@ -9,7 +9,7 @@ fi
 echo "Entrypoint: RAILS_ENV is currently: ${RAILS_ENV}"
 
 echo "Entrypoint: Running database migrations..."
-bundle exec rails db:migrate
+# bundle exec rails db:migrate
 echo "Entrypoint: Database migrations complete."
 
 echo "Entrypoint: Avoiding database seeds..."

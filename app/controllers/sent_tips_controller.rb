@@ -1,5 +1,12 @@
+# app/controllers/sent_tips_controller.rb
 class SentTipsController < ApplicationController
-  before_action :authenticate_admin_user!
+  # This line will skip CSRF token verification for the 'create' action.
+  # This is necessary for API requests from mobile apps which do not handle CSRF tokens.
+  # IMPORTANT: In a production environment, ensure this endpoint is protected by an
+  # API-specific authentication method (e.g., API tokens) if it's meant to be secure.
+  skip_before_action :verify_authenticity_token, only: [:create]
+
+  before_action :authenticate_admin_user! # Keep this for Devise authentication
 
   def create
     @sent_tip = SentTip.new(sent_tip_params)
@@ -33,7 +40,21 @@ class SentTipsController < ApplicationController
       flash_message = "Failed to save record: #{@sent_tip.errors.full_messages.join(", ")}. #{flash_message}"
     end
 
-    redirect_to root_path, notice: flash_message
+    # For API responses, you should typically render JSON, not redirect_to HTML.
+    # The Android app expects a JSON response.
+    # If the request makes it past authentication and saves, render success JSON.
+    # If not (e.g., because authenticate_admin_user! failed), this redirect won't be seen by Android.
+    # For now, let's keep the redirect as is, but be aware for future API design.
+    respond_to do |format|
+      format.html { redirect_to root_path, notice: flash_message }
+      format.json do
+        if @sent_tip.persisted? # Check if the record was actually saved
+          render json: { message: flash_message, tip_id: @sent_tip.id }, status: :ok
+        else
+          render json: { errors: @sent_tip.errors.full_messages, message: flash_message }, status: :unprocessable_entity
+        end
+      end
+    end
   end # Closes def create
 
   # New action to clear all sent tips history
