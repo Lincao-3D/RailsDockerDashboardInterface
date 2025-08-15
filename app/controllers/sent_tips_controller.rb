@@ -4,9 +4,18 @@ class SentTipsController < ApplicationController
   # This is necessary for API requests from mobile apps which do not handle CSRF tokens.
   # IMPORTANT: In a production environment, ensure this endpoint is protected by an
   # API-specific authentication method (e.g., API tokens) if it's meant to be secure.
+  
+  # This line will skip CSRF token verification for the 'create' action.
   skip_before_action :verify_authenticity_token, only: [:create]
 
-  before_action :authenticate_admin_user! # Keep this for Devise authentication
+  # Skip Devise authentication for the create action
+  # IMPORTANT: This makes the create endpoint unauthenticated.
+  # For production, you'll want a proper API token authentication mechanism.
+  skip_before_action :authenticate_admin_user!, only: [:create] # ADD THIS LINE
+
+  # You can remove or comment out the original before_action if you add the one above,
+  # or ensure it doesn't apply to :create if it's meant for other actions.
+  # before_action :authenticate_admin_user! # This would now be redundant for :create or could be scoped to other actions
 
   def create
     @sent_tip = SentTip.new(sent_tip_params)
